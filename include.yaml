@@ -1,0 +1,6 @@
+handlers:
+- url: /userfile/.*
+  script: plugins.user_file.getfile_app
+
+- url: /download/.*
+  script: plugins.user_file.download_app

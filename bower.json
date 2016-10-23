@@ -1,0 +1,20 @@
+{
+  "name": "user_file",
+  "homepage": "https://github.com/argeweb/plugin-user-file",
+  "authors": [
+    "cwen0708 <cwen0708@gmail.com>"
+  ],
+  "description": "Provide site users to upload files",
+  "main": "",
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "application_user": "argeweb/plugin-backend-ui-material"
+  }
+}
