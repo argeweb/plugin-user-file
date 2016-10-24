@@ -11,18 +11,25 @@ from google.appengine.ext.webapp import blobstore_handlers
 from google.appengine.ext import blobstore
 import urllib
 
-
-user_file_action_helper = {
-    "group": u"檔案管理",
-    "actions": [
-        {"action": "list", "name": u"檔案管理"},
-        {"action": "images_list", "name": u"圖片列表"},
-        {"action": "add", "name": u"新增檔案管理"},
-        {"action": "edit", "name": u"編輯檔案管理"},
-        {"action": "view", "name": u"檢視檔案管理"},
-        {"action": "delete", "name": u"刪除檔案管理"},
-    ]
+plugins_helper = {
+    "title": u"線上編輯原始碼",
+    "desc": u"提供網站使用者進行檔案上傳",
+    "controllers": {
+        "user_file": {
+            "group": u"檔案管理",
+            "actions": [
+                {"action": "list", "name": u"檔案管理"},
+                {"action": "images_list", "name": u"圖片列表"},
+                {"action": "add", "name": u"新增檔案管理"},
+                {"action": "edit", "name": u"編輯檔案管理"},
+                {"action": "view", "name": u"檢視檔案管理"},
+                {"action": "delete", "name": u"刪除檔案管理"},
+                {"action": "plugins_check", "name": u"啟用停用模組"},
+            ]
+        }
+    }
 }
+
 
 class GetFileHandler(blobstore_handlers.BlobstoreDownloadHandler):
     def get(self, source_blob_key):
