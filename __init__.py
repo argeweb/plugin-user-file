@@ -12,7 +12,7 @@ from google.appengine.ext import blobstore
 import urllib
 
 plugins_helper = {
-    "title": u"線上編輯原始碼",
+    "title": u"使用者檔案管理",
     "desc": u"提供網站使用者進行檔案上傳",
     "controllers": {
         "user_file": {
