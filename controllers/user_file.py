@@ -14,17 +14,7 @@ from argeweb.components.upload import Upload
 from argeweb import route_with, route_menu
 from google.appengine.ext.webapp import blobstore_handlers
 from google.appengine.ext import blobstore
-
-
-def generate_upload_url(success_path):
-    from google.appengine.ext import blobstore
-    from argeweb import settings
-    cloud_storage_bucket = ""
-    if settings.get('upload').get('use_cloud_storage'):
-        cloud_storage_bucket = settings.get('upload', {}).get('bucket')
-    return blobstore.create_upload_url(
-            success_path= success_path,
-            gs_bucket_name=cloud_storage_bucket)
+from argeweb.core.scaffold import generate_upload_url
 
 
 class UserFile(argeweb.Controller):
@@ -51,11 +41,12 @@ class UserFile(argeweb.Controller):
             'url': generate_upload_url(self.uri(uri))
         }
 
-    @route_menu(list_name=u"backend", text=u"圖片", sort=9800, icon="files-o", group=u"檔案管理")
+    @route_menu(list_name=u"backend", text=u"圖片", sort=9700, icon="files-o", group=u"檔案管理")
     @route_with('/admin/user_file/images_list')
     def admin_images_list(self):
         self.meta.pagination_limit = 12
         model = self.meta.Model
+
         def photo_factory(self):
             return model.query(
                 model.content_type.IN(["image/jpeg", "image/jpg", "image/png", "image/gif"])).order(
@@ -63,7 +54,7 @@ class UserFile(argeweb.Controller):
         self.scaffold.query_factory = photo_factory
         return scaffold.list(self)
 
-    @route_menu(list_name=u"backend", text=u"檔案", sort=9802, icon="files-o", group=u"檔案管理")
+    @route_menu(list_name=u"backend", text=u"使用者檔案", sort=9701, icon="files-o", group=u"檔案管理")
     def admin_list(self):
         return scaffold.list(self)
 
