@@ -10,12 +10,12 @@
         {%- set n = n + 1 -%}
         <div class="col-xs-6 col-sm-6 col-md-4 col-lg-3">
             <div class="file ">
-                <a href="{{ item.url }}">
-                    <div class="image" style="background-image: url('{{ item.url }}');"></div>
+                <a href="/{{ item.path }}" target="_blank">
+                    <div class="image" style="background-image: url('/{{ item.path }}');"></div>
                     <div class="file-name">
-                        <span class="file-name-span">{{ item.filename }}
+                        <span class="file-name-span">{{ item.name }}
                         <br></span>
-                        <small class="hidden-sm hidden-xs">上傳日期：{{ print_value(item.modified) }}</small>
+                        <small class="hidden-sm hidden-xs">上傳日期：{{ print_value(item.created) }}</small>
                     </div>
                 </a>
             </div>

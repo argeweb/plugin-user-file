@@ -15,23 +15,19 @@ from argeweb import route_with, route_menu
 from google.appengine.ext.webapp import blobstore_handlers
 from google.appengine.ext import blobstore
 from argeweb.core.scaffold import generate_upload_url
+from plugins.file.models.file_model import FileModel
 
 
 class UserFile(argeweb.Controller):
     class Meta:
+        Model = FileModel
         components = (scaffold.Scaffolding, Upload, Pagination, Search)
         pagination_limit = 10
         pagination_actions = ("list", "images_list",)
         upload_actions = ("add", "add_from_ui")
         
     class Scaffold:
-        title = {
-            "list": u"檔案管理",
-            "add": u"新增檔案",
-            "edit": u"編輯檔案",
-            "view": u"檢視檔案",
-        }
-        display_properties_in_list = ("filename", "content_type", "size", "url")
+        display_properties_in_list = ("name", "content_type", "content_length", "path")
 
     @route_with('/admin/user_file/get.json')
     def admin_get_url(self):
@@ -58,19 +54,21 @@ class UserFile(argeweb.Controller):
     def admin_list(self):
         return scaffold.list(self)
 
+    @route_menu(list_name=u"backend", text=u"aaaaaa", sort=9711)
     def admin_add(self):
         def scaffold_after_apply(**kwargs):
             item = kwargs["item"]
             controller = kwargs["controller"]
             blob_key = blobstore.BlobInfo.get(item.file)
             item.content_type = blob_key.content_type
-            item.filename = blob_key.filename
-            item.hash = blob_key.md5_hash
-            item.size = blob_key.size
-            item.url = "/userfile/" + str(item.file) + "." + item.filename.split(".")[-1]
+            item.name = blob_key.filename
+            item.last_md5 = blob_key.md5_hash
+            item.content_length = blob_key.size
+            item.path = "userfile/" + str(item.file) + "." + item.name.split(".")[-1]
             item.put()
+            item.make_directory()
             controller.context["data"] = {
-                "url": item.url,
+                "url": item.path,
                 "item": item
             }
         self.events.scaffold_after_apply += scaffold_after_apply
@@ -84,13 +82,14 @@ class UserFile(argeweb.Controller):
             controller = kwargs["controller"]
             blob_key = blobstore.BlobInfo.get(item.file)
             item.content_type = blob_key.content_type
-            item.filename = blob_key.filename
-            item.hash = blob_key.md5_hash
-            item.size = blob_key.size
-            item.url = "/userfile/" + str(item.file) + "." + item.filename.split(".")[-1]
+            item.name = blob_key.filename
+            item.last_md5 = blob_key.md5_hash
+            item.content_length = blob_key.size
+            item.path = "userfile/" + str(item.file) + "." + item.name.split(".")[-1]
             item.put()
+            item.make_directory()
             controller.context["data"] = {
-                "url": item.url,
+                "url": item.path,
                 "item": item
             }
         self.events.scaffold_after_apply += scaffold_after_apply
@@ -99,8 +98,7 @@ class UserFile(argeweb.Controller):
     def admin_delete(self, key):
         try:
             item = self.util.decode_key(key).get()
-            file_key = item.file
-            blobstore.delete(file_key)
+            blobstore.delete(item.resource_data)
         except:
             pass
         return scaffold.delete(self, key)
