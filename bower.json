@@ -15,6 +15,7 @@
     "tests"
   ],
   "dependencies": {
-    "application_user": "argeweb/plugin-backend-ui-material"
+    "application_user": "argeweb/plugin-backend-ui-material",
+    "file": "argeweb/plugin-file"
   }
 }
