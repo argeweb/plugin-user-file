@@ -37,7 +37,7 @@ class UserFile(argeweb.Controller):
             'url': generate_upload_url(self.uri(uri))
         }
 
-    @route_menu(list_name=u"backend", text=u"圖片", sort=9700, icon="files-o", group=u"檔案管理")
+    @route_menu(list_name=u"backend", text=u"圖片", sort=9800, icon="files-o", group=u"檔案管理")
     @route_with('/admin/user_file/images_list')
     def admin_images_list(self):
         self.meta.pagination_limit = 12
@@ -50,11 +50,10 @@ class UserFile(argeweb.Controller):
         self.scaffold.query_factory = photo_factory
         return scaffold.list(self)
 
-    @route_menu(list_name=u"backend", text=u"使用者檔案", sort=9701, icon="files-o", group=u"檔案管理")
+    @route_menu(list_name=u"backend", text=u"使用者檔案", sort=9801, icon="files-o", group=u"檔案管理")
     def admin_list(self):
         return scaffold.list(self)
 
-    @route_menu(list_name=u"backend", text=u"aaaaaa", sort=9711)
     def admin_add(self):
         def scaffold_after_apply(**kwargs):
             item = kwargs["item"]
