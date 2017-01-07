@@ -11,10 +11,9 @@ from argeweb import scaffold
 from argeweb.components.pagination import Pagination
 from argeweb.components.search import Search
 from argeweb.components.upload import Upload
-from argeweb import route_with, route_menu
+from argeweb import route_with, route_menu, route
 from google.appengine.ext.webapp import blobstore_handlers
 from google.appengine.ext import blobstore
-from argeweb.core.scaffold import generate_upload_url
 from plugins.file.models.file_model import FileModel
 
 
@@ -25,29 +24,30 @@ class UserFile(argeweb.Controller):
         pagination_limit = 10
         pagination_actions = ('list', 'images_list',)
         upload_actions = ('add', 'add_from_ui')
-        
+
     class Scaffold:
         display_properties_in_list = ('name', 'content_type', 'content_length', 'path')
 
-    @route_with('/admin/user_file/get.json')
+    @route
     def admin_get_url(self):
         self.meta.change_view('json')
-        uri = self.params.get_string('uri', 'admin:user_file:add_from_ui')
+        uri = self.params.get_string('uri', 'admin:user_file:user_file:add_from_ui')
+
         self.context['data'] = {
-            'url': generate_upload_url(self.uri(uri))
+            'url': Upload.generate_upload_url(url=self.uri(uri))
         }
 
+    @route
     @route_menu(list_name=u'backend', text=u'圖片', sort=9700, icon='files-o', group=u'檔案管理')
-    @route_with('/admin/user_file/images_list')
     def admin_images_list(self):
-        self.meta.pagination_limit = 12
-        model = self.meta.Model
-
-        def photo_factory(self):
+        def query_factory(controller):
+            model = controller.meta.Model
             return model.query(
                 model.content_type.IN(['image/jpeg', 'image/jpg', 'image/png', 'image/gif'])).order(
                 -model.content_type, -model.created, model._key)
-        self.scaffold.query_factory = photo_factory
+
+        self.meta.pagination_limit = 12
+        self.scaffold.query_factory = query_factory
         return scaffold.list(self)
 
     @route_menu(list_name=u'backend', text=u'使用者檔案', sort=9701, icon='files-o', group=u'檔案管理')
@@ -67,15 +67,14 @@ class UserFile(argeweb.Controller):
             item.put()
             item.make_directory()
             controller.context['data'] = {
-                'url': item.path,
+                'url': '/' + item.path,
                 'item': item
             }
         self.events.scaffold_after_apply += scaffold_after_apply
         return scaffold.add(self)
 
-    @route_with('/admin/user_file/add_from_ui')
+    @route
     def admin_add_from_ui(self):
-        self.meta.change_view('json')
         def scaffold_after_apply(**kwargs):
             item = kwargs['item']
             controller = kwargs['controller']
@@ -88,9 +87,11 @@ class UserFile(argeweb.Controller):
             item.put()
             item.make_directory()
             controller.context['data'] = {
-                'url': item.path,
+                'url': '/' + item.path,
                 'item': item
             }
+
+        self.meta.change_view('json')
         self.events.scaffold_after_apply += scaffold_after_apply
         return scaffold.add(self)
 
