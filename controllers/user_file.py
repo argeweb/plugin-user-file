@@ -26,7 +26,7 @@ class UserFile(argeweb.Controller):
         upload_actions = ('add', 'add_from_ui')
 
     class Scaffold:
-        display_properties_in_list = ('name', 'content_type', 'content_length', 'path')
+        display_in_list = ('name', 'content_type', 'content_length', 'path')
 
     @route
     def admin_get_url(self):
