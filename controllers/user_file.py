@@ -21,7 +21,6 @@ class UserFile(argeweb.Controller):
     class Meta:
         Model = FileModel
         components = (scaffold.Scaffolding, Upload, Pagination, Search)
-        pagination_limit = 10
         pagination_actions = ('list', 'images_list',)
         upload_actions = ('add', 'add_from_ui')
 
@@ -46,7 +45,7 @@ class UserFile(argeweb.Controller):
                 model.content_type.IN(['image/jpeg', 'image/jpg', 'image/png', 'image/gif'])).order(
                 -model.content_type, -model.created, model._key)
 
-        self.meta.pagination_limit = 12
+        self.meta.pagination_limit = 60
         self.scaffold.query_factory = query_factory
         return scaffold.list(self)
 
@@ -97,7 +96,7 @@ class UserFile(argeweb.Controller):
 
     def admin_delete(self, key):
         try:
-            item = self.util.decode_key(key).get()
+            item = self.params.get_ndb_record(key)
             blobstore.delete(item.resource_data)
         except:
             pass
