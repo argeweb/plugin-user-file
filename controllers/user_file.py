@@ -37,7 +37,7 @@ class UserFile(argeweb.Controller):
         }
 
     @route
-    @route_menu(list_name=u'backend', text=u'圖片', sort=9700, icon='files-o', group=u'檔案管理')
+    @route_menu(list_name=u'backend', text=u'圖片', sort=9701, icon='files-o', group=u'檔案管理', need_hr_parent=True)
     def admin_images_list(self):
         def query_factory(controller):
             model = controller.meta.Model
@@ -49,7 +49,7 @@ class UserFile(argeweb.Controller):
         self.scaffold.query_factory = query_factory
         return scaffold.list(self)
 
-    @route_menu(list_name=u'backend', text=u'使用者檔案', sort=9701, icon='files-o', group=u'檔案管理')
+    @route_menu(list_name=u'backend', text=u'使用者檔案', sort=9702, icon='files-o', group=u'檔案管理')
     def admin_list(self):
         return scaffold.list(self)
 
