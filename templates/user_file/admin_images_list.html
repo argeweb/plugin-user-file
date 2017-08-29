@@ -1,5 +1,5 @@
 {% extends "backend/list_layout.html" %}
-{% block layout_content %}
+{% block page_content %}
 {% set list = context[scaffolding.plural] %}
 <div class="wrapper wrapper-content">
     <div class="row files-box" style="margin-left: 0">
@@ -8,8 +8,8 @@
         {%- set n = n + 1 -%}
         <div class="col-xs-4 col-sm-4 col-md-4 col-lg-3 margin-0 padding-1">
             <div class="file ">
-                <a href="/{{ item.path }}" class="gallery-item" data-gallery="">
-                    <div class="image" style="background-image: url('/{{ item.path }}');"></div>
+                <a href="{{ item.abs_path }}" class="gallery-item" data-gallery="">
+                    <div class="image" style="background-image: url('{{ item.abs_path }}');"></div>
                     <div class="file-name">
                         <span class="file-name-span">{{ item.name }}
                         <br></span>

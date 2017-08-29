@@ -11,8 +11,7 @@ from argeweb import scaffold
 from argeweb.components.pagination import Pagination
 from argeweb.components.search import Search
 from argeweb.components.upload import Upload
-from argeweb import route_with, route_menu, route
-from google.appengine.ext.webapp import blobstore_handlers
+from argeweb import route_menu, route
 from google.appengine.ext import blobstore
 from plugins.file.models.file_model import FileModel
 
@@ -25,7 +24,7 @@ class UserFile(argeweb.Controller):
         upload_actions = ('add', 'add_from_ui')
 
     class Scaffold:
-        display_in_list = ('name', 'content_type', 'content_length', 'path')
+        display_in_list = ['name', 'content_type', 'content_length', 'path']
 
     @route
     def admin_get_url(self):
@@ -37,19 +36,18 @@ class UserFile(argeweb.Controller):
         }
 
     @route
-    @route_menu(list_name=u'backend', text=u'圖片', sort=9701, icon='files-o', group=u'檔案管理', need_hr_parent=True)
+    @route_menu(list_name=u'backend', group=u'檔案管理', need_hr_parent=True, text=u'圖片', sort=9701, icon='files-o')
     def admin_images_list(self):
         def query_factory(controller):
-            model = controller.meta.Model
+            model = controller.Meta.Model
             return model.query(
                 model.content_type.IN(['image/jpeg', 'image/jpg', 'image/png', 'image/gif'])).order(
                 -model.content_type, -model.created, model._key)
 
-        self.meta.pagination_limit = 60
         self.scaffold.query_factory = query_factory
         return scaffold.list(self)
 
-    @route_menu(list_name=u'backend', text=u'使用者檔案', sort=9702, icon='files-o', group=u'檔案管理')
+    @route_menu(list_name=u'backend', group=u'檔案管理', text=u'使用者檔案', sort=9702, icon='files-o')
     def admin_list(self):
         return scaffold.list(self)
 
@@ -77,12 +75,15 @@ class UserFile(argeweb.Controller):
         def scaffold_after_apply(**kwargs):
             item = kwargs['item']
             controller = kwargs['controller']
+            path = controller.params.get_string('path', 'userfile/' + str(item.file) + '.' + item.name.split('.')[-1])
+            if str(path).startswith('/'):
+                path = path[1:]
             blob_key = blobstore.BlobInfo.get(item.file)
             item.content_type = blob_key.content_type
             item.name = blob_key.filename
             item.last_md5 = blob_key.md5_hash
-            item.content_length = blob_key.size
-            item.path = 'userfile/' + str(item.file) + '.' + item.name.split('.')[-1]
+            item.content_length = controller.params.get_integer(blob_key.size)
+            item.path = path
             item.put()
             item.make_directory()
             controller.context['data'] = {
@@ -95,9 +96,4 @@ class UserFile(argeweb.Controller):
         return scaffold.add(self)
 
     def admin_delete(self, key):
-        try:
-            item = self.params.get_ndb_record(key)
-            blobstore.delete(item.resource_data)
-        except:
-            pass
         return scaffold.delete(self, key)

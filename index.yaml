@@ -1,0 +1,5 @@
+- kind: UserFileModel
+  properties:
+  - name: content_type
+  - name: created
+    direction: desc

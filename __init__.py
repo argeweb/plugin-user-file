@@ -50,7 +50,8 @@ class GetFileHandler(blobstore_handlers.BlobstoreDownloadHandler):
             self.response.headers['Content-Type'] = blob.content_type
             self.send_blob(blob, save_as=False)
         else:
-            self.redirect("/not_found?path=/userfile/" + source_blob_key)
+            return self.error(404)
+
 
 getfile_app = webapp.WSGIApplication([('/userfile/([^/]+)?', GetFileHandler)],debug=False)
 
@@ -58,8 +59,8 @@ getfile_app = webapp.WSGIApplication([('/userfile/([^/]+)?', GetFileHandler)],de
 class DownloadFileHandler(blobstore_handlers.BlobstoreDownloadHandler):
     def get(self, source_blob_key):
         if self.request.headers.get('If-Modified-Since'):
-            self.error(304)
-            return
+            return self.error(304)
+
         if source_blob_key.find('.jpg'):
             self.response.headers['Content-Type'] = 'image/jpg'
             self.response.headers['Content-Transfer-Encoding'] = 'base64'
