@@ -53,7 +53,7 @@ class GetFileHandler(blobstore_handlers.BlobstoreDownloadHandler):
             return self.error(404)
 
 
-getfile_app = webapp.WSGIApplication([('/userfile/([^/]+)?', GetFileHandler)],debug=False)
+getfile_app = webapp.WSGIApplication([('/userfile/(.+)+', GetFileHandler)],debug=False)
 
 
 class DownloadFileHandler(blobstore_handlers.BlobstoreDownloadHandler):
@@ -73,4 +73,4 @@ class DownloadFileHandler(blobstore_handlers.BlobstoreDownloadHandler):
         else:
             self.send_blob(blobstore.BlobInfo.get(blob_key), save_as=True)
 
-download_app = webapp.WSGIApplication([('/download/([^/]+)?', DownloadFileHandler)],debug=False)
+download_app = webapp.WSGIApplication([('/download/(.+)+', DownloadFileHandler)],debug=False)
